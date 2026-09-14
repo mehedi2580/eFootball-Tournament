@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String
+  email         String       @unique
+  passwordHash  String
+  resetToken    String?
+  resetTokenExp DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  tournaments   Tournament[]
+
+  @@index([email])
+}
+
+enum TournamentStatus {
+  REGISTRATION
+  GROUPS_CREATED
+  GROUP_STAGE_IN_PROGRESS
+  GROUP_STAGE_COMPLETED
+  KNOCKOUT_STAGE
+  COMPLETED
+}
+
+enum TournamentFormat {
+  GROUP_STAGE
+}
+
+model Tournament {
+  id                   String           @id @default(cuid())
+  uniqueCode           String           @unique
+  name                 String
+  description          String?
+  organizerName        String
+  organizerId          String
+  organizer            User             @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  format               TournamentFormat @default(GROUP_STAGE)
+  status               TournamentStatus @default(REGISTRATION)
+  numParticipants      Int
+  numGroups            Int
+  participantsPerGroup Int
+  startDate            DateTime?
+  endDate              DateTime?
+  isPublic             Boolean          @default(true)
+  groupsLocked         Boolean          @default(false)
+  pointsForWin         Int              @default(3)
+  pointsForDraw        Int              @default(1)
+  pointsForLoss        Int              @default(0)
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  participants Participant[]
+  groups       Group[]
+  matches      Match[]
+
+  @@index([organizerId])
+  @@index([uniqueCode])
+}
+
+model Participant {
+  id           String     @id @default(cuid())
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  name         String
+  createdAt    DateTime   @default(now())
+
+  groupParticipant GroupParticipant?
+  matchesAsP1      Match[]           @relation("MatchParticipant1")
+  matchesAsP2      Match[]           @relation("MatchParticipant2")
+
+  @@index([tournamentId])
+}
+
+model Group {
+  id           String     @id @default(cuid())
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  name         String
+  position     Int
+
+  groupParticipants GroupParticipant[]
+  matches           Match[]
+
+  @@index([tournamentId])
+}
+
+model GroupParticipant {
+  id            String      @id @default(cuid())
+  groupId       String
+  group         Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  participantId String      @unique
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+}
+
+enum MatchStatus {
+  UPCOMING
+  COMPLETED
+}
+
+model Match {
+  id                String      @id @default(cuid())
+  tournamentId      String
+  tournament        Tournament  @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  groupId           String
+  group             Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  matchNumber       Int
+  participant1Id    String
+  participant1      Participant @relation("MatchParticipant1", fields: [participant1Id], references: [id], onDelete: Cascade)
+  participant2Id    String
+  participant2      Participant @relation("MatchParticipant2", fields: [participant2Id], references: [id], onDelete: Cascade)
+  participant1Score Int?
+  participant2Score Int?
+  status            MatchStatus @default(UPCOMING)
+  playedAt          DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([tournamentId])
+  @@index([groupId])
+  @@unique([tournamentId, participant1Id, participant2Id])
+}

@@ -51,6 +51,11 @@ export async function Footer() {
                       </Link>
                     </li>
                     <li>
+                      <Link href="/dashboard/settings" className={linkClass}>
+                        Settings
+                      </Link>
+                    </li>
+                    <li>
                       <LogoutButton
                         className="h-auto justify-start gap-1.5 p-0 text-sm font-normal text-foreground/80 hover:bg-transparent hover:text-primary"
                         labelClassName=""

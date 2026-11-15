@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Log In" };
 export default function LoginPage({
   searchParams,
 }: {
-  searchParams: { registered?: string; reset?: string };
+  searchParams: { registered?: string; reset?: string; "email-changed"?: string };
 }) {
   return (
     <Card>
@@ -25,6 +25,11 @@ export default function LoginPage({
         {searchParams.reset && (
           <p className="mb-4 rounded-md bg-success/10 px-3 py-2 text-sm text-success">
             Password updated. You can now log in.
+          </p>
+        )}
+        {searchParams["email-changed"] && (
+          <p className="mb-4 rounded-md bg-success/10 px-3 py-2 text-sm text-success">
+            Email updated. Please sign in with your new email.
           </p>
         )}
         <LoginForm />

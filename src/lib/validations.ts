@@ -32,6 +32,22 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
+export const changeEmailSchema = z.object({
+  email: z.string().email("Enter a valid email address"),
+  currentPassword: z.string().min(1, "Current password is required"),
+});
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export const createTournamentSchema = z
   .object({
     name: z.string().min(3, "Tournament name must be at least 3 characters").max(100),

@@ -40,6 +40,14 @@ export function distributeIntoGroups<T>(participants: T[], numGroups: number): T
 }
 
 export function groupLetterName(position: number) {
-  // position is 0-indexed -> "Group A", "Group B", ...
-  return `Group ${String.fromCharCode(65 + position)}`;
+  // position is 0-indexed -> "Group A", "Group B", ... "Group Z", "Group AA", ...
+  // Excel-style letters so groups beyond 26 still get a sane name.
+  let n = position + 1;
+  let letters = "";
+  while (n > 0) {
+    const rem = (n - 1) % 26;
+    letters = String.fromCharCode(65 + rem) + letters;
+    n = Math.floor((n - 1) / 26);
+  }
+  return `Group ${letters}`;
 }

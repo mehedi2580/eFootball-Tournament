@@ -22,23 +22,32 @@ export async function signUpAction(_prev: ActionState, formData: FormData): Prom
 
   const email = parsed.data.email.toLowerCase().trim();
 
-  const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) {
+  try {
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      return {
+        success: false,
+        fieldErrors: { email: ["An account with this email already exists."] },
+      };
+    }
+
+    const passwordHash = await bcrypt.hash(parsed.data.password, 10);
+
+    await prisma.user.create({
+      data: {
+        name: parsed.data.name.trim(),
+        email,
+        passwordHash,
+      },
+    });
+  } catch {
+    // e.g. the database is unreachable: show a friendly message instead of
+    // crashing the form with a generic server error.
     return {
       success: false,
-      fieldErrors: { email: ["An account with this email already exists."] },
+      message: "Something went wrong while creating your account. Please try again later.",
     };
   }
-
-  const passwordHash = await bcrypt.hash(parsed.data.password, 10);
-
-  await prisma.user.create({
-    data: {
-      name: parsed.data.name.trim(),
-      email,
-      passwordHash,
-    },
-  });
 
   redirect("/login?registered=1");
 }
@@ -53,23 +62,27 @@ export async function forgotPasswordAction(
   }
 
   const email = parsed.data.email.toLowerCase().trim();
-  const user = await prisma.user.findUnique({ where: { email } });
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
 
-  // Always respond the same way whether or not the account exists, to avoid
-  // leaking which emails are registered.
-  if (user) {
-    const token = crypto.randomBytes(32).toString("hex");
-    const resetTokenExp = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { resetToken: token, resetTokenExp },
-    });
+    // Always respond the same way whether or not the account exists, to avoid
+    // leaking which emails are registered.
+    if (user) {
+      const token = crypto.randomBytes(32).toString("hex");
+      const resetTokenExp = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { resetToken: token, resetTokenExp },
+      });
 
-    // NOTE: no transactional email provider is configured in this starter.
-    // Log the reset link so it can be tested locally / wire up a provider
-    // like Resend or Postmark here in production.
-    const resetUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/reset-password?token=${token}`;
-    console.log(`[password reset] ${email}: ${resetUrl}`);
+      // NOTE: no transactional email provider is configured in this starter.
+      // Log the reset link so it can be tested locally / wire up a provider
+      // like Resend or Postmark here in production.
+      const resetUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/reset-password?token=${token}`;
+      console.log(`[password reset] ${email}: ${resetUrl}`);
+    }
+  } catch {
+    return { success: false, message: "Something went wrong. Please try again later." };
   }
 
   return {
@@ -91,22 +104,26 @@ export async function resetPasswordAction(
     return { success: false, fieldErrors: parsed.error.flatten().fieldErrors };
   }
 
-  const user = await prisma.user.findFirst({
-    where: { resetToken: parsed.data.token, resetTokenExp: { gt: new Date() } },
-  });
+  try {
+    const user = await prisma.user.findFirst({
+      where: { resetToken: parsed.data.token, resetTokenExp: { gt: new Date() } },
+    });
 
-  if (!user) {
-    return {
-      success: false,
-      message: "This reset link is invalid or has expired. Please request a new one.",
-    };
+    if (!user) {
+      return {
+        success: false,
+        message: "This reset link is invalid or has expired. Please request a new one.",
+      };
+    }
+
+    const passwordHash = await bcrypt.hash(parsed.data.password, 10);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { passwordHash, resetToken: null, resetTokenExp: null },
+    });
+  } catch {
+    return { success: false, message: "Something went wrong. Please try again later." };
   }
-
-  const passwordHash = await bcrypt.hash(parsed.data.password, 10);
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { passwordHash, resetToken: null, resetTokenExp: null },
-  });
 
   redirect("/login?reset=1");
 }

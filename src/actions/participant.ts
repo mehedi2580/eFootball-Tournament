@@ -71,6 +71,15 @@ export async function editParticipantAction(
   }
 
   const name = parsed.data.name.trim();
+
+  // The participant must belong to this tournament, not just exist.
+  const participant = await prisma.participant.findUnique({
+    where: { id: parsed.data.participantId },
+  });
+  if (!participant || participant.tournamentId !== tournamentId) {
+    return { success: false, message: "Participant not found." };
+  }
+
   const duplicate = await prisma.participant.findFirst({
     where: {
       tournamentId,
@@ -96,6 +105,12 @@ export async function removeParticipantAction(tournamentId: string, participantI
 
   if (tournament.groupsLocked) {
     throw new Error("Groups are locked. Reset the tournament to remove participants.");
+  }
+
+  // The participant must belong to this tournament, not just exist.
+  const participant = await prisma.participant.findUnique({ where: { id: participantId } });
+  if (!participant || participant.tournamentId !== tournamentId) {
+    throw new Error("Participant not found.");
   }
 
   await prisma.participant.delete({ where: { id: participantId } });

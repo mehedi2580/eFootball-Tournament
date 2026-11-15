@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormState } from "react-dom";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Lock, X, Check } from "lucide-react";
 import { addParticipantAction, editParticipantAction, removeParticipantAction } from "@/actions/participant";
@@ -31,6 +31,15 @@ export function ParticipantsPanel({
 }) {
   const addAction = addParticipantAction.bind(null, tournamentId);
   const [state, formAction] = useFormState(addAction, initialActionState);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Clear the name box after each successful add (on failure the typed
+  // name stays so the user can fix it instead of retyping).
+  useEffect(() => {
+    if (state.success) {
+      formRef.current?.reset();
+    }
+  }, [state]);
 
   return (
     <div className="space-y-4">
@@ -49,7 +58,7 @@ export function ParticipantsPanel({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={formAction} className="flex flex-col gap-3 sm:flex-row sm:items-start">
+            <form ref={formRef} action={formAction} className="flex flex-col gap-3 sm:flex-row sm:items-start">
               <div className="flex-1">
                 <Label htmlFor="participant-name" className="sr-only">
                   Participant name

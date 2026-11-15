@@ -41,6 +41,16 @@ export async function Footer() {
               </ul>
             </div>
             <div>
+              <p className={headingClass}>About</p>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/about" className={linkClass}>
+                    About Us
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
               <p className={headingClass}>Account</p>
               <ul className="space-y-2 text-sm">
                 {user ? (

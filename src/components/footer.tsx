@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
+import { LogoutButton } from "@/components/logout-button";
+import { getCurrentUser } from "@/lib/session";
 
 const linkClass = "text-foreground/80 transition-colors hover:text-primary";
 const headingClass = "mb-3 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground";
 
-export function Footer() {
+export async function Footer() {
+  const user = await getCurrentUser();
   return (
     <footer className="mt-12 rounded-t-[28px] border-t border-border bg-white/70 backdrop-blur-lg">
       <div className="container-app py-10 sm:py-12">
@@ -40,16 +43,34 @@ export function Footer() {
             <div>
               <p className={headingClass}>Account</p>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/login" className={linkClass}>
-                    Log In
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/signup" className={linkClass}>
-                    Sign Up
-                  </Link>
-                </li>
+                {user ? (
+                  <>
+                    <li>
+                      <Link href="/dashboard" className={linkClass}>
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <LogoutButton
+                        className="h-auto justify-start gap-1.5 p-0 text-sm font-normal text-foreground/80 hover:bg-transparent hover:text-primary"
+                        labelClassName=""
+                      />
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link href="/login" className={linkClass}>
+                        Log In
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/signup" className={linkClass}>
+                        Sign Up
+                      </Link>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           </div>

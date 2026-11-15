@@ -46,11 +46,6 @@ export async function Footer() {
                 {user ? (
                   <>
                     <li>
-                      <Link href="/dashboard" className={linkClass}>
-                        Dashboard
-                      </Link>
-                    </li>
-                    <li>
                       <Link href="/dashboard/settings" className={linkClass}>
                         Settings
                       </Link>

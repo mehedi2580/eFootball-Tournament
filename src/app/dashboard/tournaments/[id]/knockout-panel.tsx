@@ -121,9 +121,9 @@ export function KnockoutPanel({
   return (
     <div className="space-y-6">
       {bracket.champion && (
-        <Card>
+        <Card className="border-gold/50 bg-gold-soft">
           <CardContent className="flex items-center gap-3 p-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gold-light to-gold text-[#1A1200]">
               <Trophy className="h-5 w-5" />
             </div>
             <div>

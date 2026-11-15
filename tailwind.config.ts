@@ -20,6 +20,7 @@ const config: Config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          hover: "#3730C9",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -37,11 +38,40 @@ const config: Config = {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        gold: {
+          DEFAULT: "#EDBB00",
+          light: "#FBBF24",
+          soft: "#FEF9E7",
+        },
+        navy: {
+          DEFAULT: "#0B1020",
+          deep: "#001432",
+          soft: "#121829",
+        },
+      },
+      fontFamily: {
+        sans: [
+          "var(--font-inter)",
+          "ui-sans-serif",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"Segoe UI"',
+          "Roboto",
+          "Arial",
+          "sans-serif",
+        ],
       },
       borderRadius: {
-        lg: "0.75rem",
-        md: "0.5rem",
-        sm: "0.375rem",
+        lg: "1.25rem",
+        md: "0.875rem",
+        sm: "0.5rem",
+      },
+      boxShadow: {
+        card: "0 1px 2px rgba(16, 24, 40, 0.05)",
+        "card-hover": "0 18px 40px rgba(17, 24, 39, 0.10)",
+        primary: "0 10px 22px rgba(77, 70, 232, 0.28)",
+        pill: "0 10px 26px rgba(2, 6, 23, 0.28)",
       },
     },
   },

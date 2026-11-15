@@ -1,51 +1,49 @@
 import Link from "next/link";
-import { Trophy } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
+import { Logo } from "@/components/logo";
+
+const navLinkClass =
+  "rounded-full px-3 py-2 text-sm font-semibold text-white/70 transition-colors hover:bg-white/10 hover:text-white";
 
 export async function Navbar() {
   const user = await getCurrentUser();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="container-app flex h-14 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <Trophy className="h-5 w-5 shrink-0 text-primary" />
-          <span>
-            eFootball <span className="hidden sm:inline">Hub</span>
-          </span>
+    <div className="sticky top-3 z-40 px-3 sm:top-4 sm:px-4">
+      <header className="mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full border border-white/10 bg-navy/95 pl-3 pr-2 shadow-pill backdrop-blur-xl sm:h-16 sm:pl-4 sm:pr-3">
+        <Link href="/" aria-label="eFootball Hub home">
+          <Logo variant="dark" />
         </Link>
-        <nav className="flex items-center gap-0.5 sm:gap-2">
-          <Link href="/tournaments">
-            <Button variant="ghost" size="sm">
-              <span className="hidden sm:inline">Find Tournament</span>
-              <span className="sm:hidden">Find</span>
-            </Button>
+        <nav className="flex items-center gap-0.5 sm:gap-1">
+          <Link href="/tournaments" className={`${navLinkClass} hidden sm:block`}>
+            Find Tournament
           </Link>
           {user ? (
             <>
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm">
-                  Dashboard
-                </Button>
+              <Link href="/dashboard" className={navLinkClass}>
+                Dashboard
               </Link>
               <LogoutButton />
             </>
           ) : (
             <>
-              <Link href="/login">
-                <Button variant="ghost" size="sm">
-                  Log In
-                </Button>
+              <Link href="/tournaments" className={`${navLinkClass} sm:hidden`}>
+                Find
+              </Link>
+              <Link href="/login" className={`${navLinkClass} hidden min-[420px]:block`}>
+                Log In
               </Link>
               <Link href="/signup">
-                <Button size="sm">Sign Up</Button>
+                <Button size="sm" className="bg-white text-navy hover:bg-white/90">
+                  Sign Up
+                </Button>
               </Link>
             </>
           )}
         </nav>
-      </div>
-    </header>
+      </header>
+    </div>
   );
 }

@@ -29,14 +29,14 @@ export function TournamentCard({
   showManage?: boolean;
 }) {
   return (
-    <Card>
+    <Card className="card-hover">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-semibold leading-snug">{tournament.name}</h3>
           <div className="shrink-0"><StatusBadge status={tournament.status} /></div>
         </div>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-          <span className="font-mono font-medium text-foreground">{tournament.uniqueCode}</span>
+          <span className="rounded-full bg-primary/10 px-2 py-0.5 font-mono font-semibold text-primary">{tournament.uniqueCode}</span>
           {tournament.organizerName && <span>by {tournament.organizerName}</span>}
           <span>{formatDate(tournament.createdAt)}</span>
         </div>

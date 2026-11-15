@@ -9,7 +9,7 @@ export function LogoutButton() {
     <Button
       variant="ghost"
       size="sm"
-      className="gap-1.5"
+      className="gap-1.5 text-white/80 hover:bg-white/10 hover:text-white"
       onClick={() => signOut({ callbackUrl: "/" })}
     >
       <LogOut className="h-3.5 w-3.5" />

@@ -41,14 +41,15 @@ export function statusLabel(status: string) {
 
 export function statusVariant(
   status: string
-): "default" | "success" | "warning" | "muted" {
+): "default" | "success" | "warning" | "muted" | "gold" {
   switch (status) {
     case "REGISTRATION":
     case "GROUPS_CREATED":
       return "muted";
     case "GROUP_STAGE_IN_PROGRESS":
-    case "KNOCKOUT_STAGE":
       return "warning";
+    case "KNOCKOUT_STAGE":
+      return "gold";
     case "GROUP_STAGE_COMPLETED":
     case "COMPLETED":
       return "success";

@@ -34,10 +34,12 @@ export function MatchCard(props: MatchCardProps) {
   } = props;
 
   const isCompleted = status === "COMPLETED";
+  const p1Won = isCompleted && (participant1Score ?? 0) > (participant2Score ?? 0);
+  const p2Won = isCompleted && (participant2Score ?? 0) > (participant1Score ?? 0);
 
   return (
     <Link href={`/tournament/${tournamentCode}/match/${matchId}`}>
-      <Card className="p-4 transition-colors hover:border-primary/40">
+      <Card className="card-hover bg-[#F9F9FE] p-4">
         <div className="mb-3 flex items-center justify-between">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {stageLabel ?? groupName ?? "Match"} · Match {String(matchNumber).padStart(2, "0")}
@@ -46,12 +48,16 @@ export function MatchCard(props: MatchCardProps) {
         </div>
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-3">
           <p className="truncate text-right text-[13px] font-semibold sm:text-sm">{participant1Name}</p>
-          <div className="flex items-center justify-center gap-2 rounded-md bg-muted px-2 py-1 text-sm font-bold tabular-nums sm:px-3 sm:py-1.5">
-            <span>{isCompleted ? participant1Score : "—"}</span>
+          <div className="flex items-center justify-center gap-2 rounded-md bg-white px-2 py-1 text-sm font-bold tabular-nums shadow-sm sm:px-3 sm:py-1.5">
+            <span className={p1Won ? "text-emerald-600" : undefined}>
+              {isCompleted ? participant1Score : "—"}
+            </span>
             <span className="text-xs font-normal text-muted-foreground">
               {isCompleted ? "–" : "vs"}
             </span>
-            <span>{isCompleted ? participant2Score : "—"}</span>
+            <span className={p2Won ? "text-emerald-600" : undefined}>
+              {isCompleted ? participant2Score : "—"}
+            </span>
           </div>
           <p className="truncate text-[13px] font-semibold sm:text-sm">{participant2Name}</p>
         </div>

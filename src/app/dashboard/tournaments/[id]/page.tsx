@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ParticipantsPanel } from "./participants-panel";
 import { GroupsPanel } from "./groups-panel";
 import { FixturesPanel } from "./fixtures-panel";
+import { KnockoutPanel } from "./knockout-panel";
 import { SettingsPanel } from "./settings-panel";
 import { StandingsTable } from "@/components/standings-table";
 
@@ -72,6 +73,7 @@ export default async function ManageTournamentPage({ params }: { params: { id: s
           <TabsTrigger value="participants">Participants</TabsTrigger>
           <TabsTrigger value="groups">Groups</TabsTrigger>
           <TabsTrigger value="fixtures">Fixtures &amp; Results</TabsTrigger>
+          <TabsTrigger value="knockout">Knockout</TabsTrigger>
           <TabsTrigger value="standings">Standings</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
@@ -108,7 +110,8 @@ export default async function ManageTournamentPage({ params }: { params: { id: s
               id: m.id,
               matchNumber: m.matchNumber,
               groupId: m.groupId,
-              groupName: m.group.name,
+              groupName: m.group?.name ?? null,
+              stage: m.stage,
               participant1Id: m.participant1Id,
               participant1Name: m.participant1.name,
               participant2Id: m.participant2Id,
@@ -117,6 +120,36 @@ export default async function ManageTournamentPage({ params }: { params: { id: s
               participant2Score: m.participant2Score,
               status: m.status,
             }))}
+          />
+        </TabsContent>
+
+        <TabsContent value="knockout">
+          <KnockoutPanel
+            tournamentId={tournament.id}
+            status={tournament.status}
+            groups={tournament.groups.map((g) => ({
+              id: g.id,
+              name: g.name,
+              participants: g.groupParticipants.map((gp) => ({ id: gp.participant.id, name: gp.participant.name })),
+            }))}
+            matches={tournament.matches.map((m) => ({
+              id: m.id,
+              matchNumber: m.matchNumber,
+              groupId: m.groupId,
+              stage: m.stage,
+              participant1Id: m.participant1Id,
+              participant1Name: m.participant1.name,
+              participant2Id: m.participant2Id,
+              participant2Name: m.participant2.name,
+              participant1Score: m.participant1Score,
+              participant2Score: m.participant2Score,
+              status: m.status,
+            }))}
+            scoring={{
+              win: tournament.pointsForWin,
+              draw: tournament.pointsForDraw,
+              loss: tournament.pointsForLoss,
+            }}
           />
         </TabsContent>
 

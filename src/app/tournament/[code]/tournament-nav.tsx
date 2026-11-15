@@ -13,6 +13,7 @@ export function TournamentNav({ code }: { code: string }) {
     { href: `${base}/groups`, label: "Groups" },
     { href: `${base}/fixtures`, label: "Fixtures" },
     { href: `${base}/results`, label: "Results" },
+    { href: `${base}/knockout`, label: "Knockout" },
     { href: `${base}/standings`, label: "Standings" },
   ];
 

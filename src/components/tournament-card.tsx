@@ -33,7 +33,7 @@ export function TournamentCard({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-semibold leading-snug">{tournament.name}</h3>
-          <StatusBadge status={tournament.status} />
+          <div className="shrink-0"><StatusBadge status={tournament.status} /></div>
         </div>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <span className="font-mono font-medium text-foreground">{tournament.uniqueCode}</span>

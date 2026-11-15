@@ -43,7 +43,7 @@ export function Dialog({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative z-10 w-full max-w-md rounded-lg border border-border bg-card p-5 shadow-lg",
+          "relative z-10 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg border border-border bg-card p-5 shadow-lg",
           className
         )}
       >

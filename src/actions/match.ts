@@ -36,6 +36,29 @@ export async function saveMatchResultAction(
     return { success: false, message: "Match not found." };
   }
 
+  // Group results are frozen once the knockout stage starts — the bracket is
+  // built from the group standings, so changing them would invalidate it.
+  if (
+    match.stage === "GROUP" &&
+    (tournament.status === "KNOCKOUT_STAGE" || tournament.status === "COMPLETED")
+  ) {
+    return {
+      success: false,
+      message: "Group results are locked once the knockout stage has started.",
+    };
+  }
+
+  // Knockout matches must produce a winner — no draws.
+  if (
+    match.stage !== "GROUP" &&
+    parsed.data.participant1Score === parsed.data.participant2Score
+  ) {
+    return {
+      success: false,
+      message: "Knockout matches cannot end in a draw. Enter a decisive score.",
+    };
+  }
+
   await prisma.match.update({
     where: { id: match.id },
     data: {
@@ -47,16 +70,26 @@ export async function saveMatchResultAction(
   });
 
   // Recompute overall tournament progress/status from match results (source of truth).
-  const [totalMatches, completedMatches] = await Promise.all([
-    prisma.match.count({ where: { tournamentId } }),
-    prisma.match.count({ where: { tournamentId, status: "COMPLETED" } }),
-  ]);
+  const knockoutCount = await prisma.match.count({
+    where: { tournamentId, stage: { not: "GROUP" } },
+  });
 
   let status = tournament.status;
-  if (totalMatches > 0 && completedMatches === totalMatches) {
-    status = "GROUP_STAGE_COMPLETED";
-  } else if (completedMatches > 0) {
-    status = "GROUP_STAGE_IN_PROGRESS";
+  if (knockoutCount > 0) {
+    const final = await prisma.match.findFirst({
+      where: { tournamentId, stage: "FINAL" },
+    });
+    status = final && final.status === "COMPLETED" ? "COMPLETED" : "KNOCKOUT_STAGE";
+  } else {
+    const [totalMatches, completedMatches] = await Promise.all([
+      prisma.match.count({ where: { tournamentId } }),
+      prisma.match.count({ where: { tournamentId, status: "COMPLETED" } }),
+    ]);
+    if (totalMatches > 0 && completedMatches === totalMatches) {
+      status = "GROUP_STAGE_COMPLETED";
+    } else if (completedMatches > 0) {
+      status = "GROUP_STAGE_IN_PROGRESS";
+    }
   }
   if (status !== tournament.status) {
     await prisma.tournament.update({ where: { id: tournamentId }, data: { status } });
@@ -64,5 +97,6 @@ export async function saveMatchResultAction(
 
   revalidatePath(`/dashboard/tournaments/${tournamentId}`);
   revalidatePath(`/tournament/${tournament.uniqueCode}`);
+  revalidatePath(`/tournament/${tournament.uniqueCode}/knockout`);
   return { success: true, message: "Result saved." };
 }

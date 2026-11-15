@@ -129,9 +129,9 @@ function ParticipantRow({
 
   return (
     <div className="flex items-center justify-between gap-2 p-3">
-      <span className="text-sm font-medium">{participant.name}</span>
+      <span className="min-w-0 flex-1 truncate text-sm font-medium">{participant.name}</span>
       {!locked && (
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           <Button type="button" size="icon" variant="ghost" onClick={() => setEditing(true)}>
             <Pencil className="h-4 w-4" />
           </Button>

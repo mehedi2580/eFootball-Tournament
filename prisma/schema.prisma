@@ -107,12 +107,23 @@ enum MatchStatus {
   COMPLETED
 }
 
+enum MatchStage {
+  GROUP
+  ROUND_OF_64
+  ROUND_OF_32
+  ROUND_OF_16
+  QUARTER_FINAL
+  SEMI_FINAL
+  FINAL
+}
+
 model Match {
   id                String      @id @default(cuid())
   tournamentId      String
   tournament        Tournament  @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  groupId           String
-  group             Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId           String?
+  group             Group?      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  stage             MatchStage  @default(GROUP)
   matchNumber       Int
   participant1Id    String
   participant1      Participant @relation("MatchParticipant1", fields: [participant1Id], references: [id], onDelete: Cascade)
@@ -127,5 +138,5 @@ model Match {
 
   @@index([tournamentId])
   @@index([groupId])
-  @@unique([tournamentId, participant1Id, participant2Id])
+  @@unique([tournamentId, stage, participant1Id, participant2Id])
 }

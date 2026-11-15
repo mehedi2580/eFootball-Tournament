@@ -37,7 +37,7 @@ export function CreateTournamentForm() {
         <FieldError messages={state.fieldErrors?.organizerName} />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Label htmlFor="numParticipants">Number of Participants</Label>
           <Input
@@ -71,7 +71,7 @@ export function CreateTournamentForm() {
         Participants per group is calculated automatically once groups are randomized.
       </p>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Label htmlFor="startDate">Start Date</Label>
           <Input id="startDate" name="startDate" type="date" className="mt-1.5" />

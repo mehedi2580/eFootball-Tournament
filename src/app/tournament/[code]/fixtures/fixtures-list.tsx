@@ -5,12 +5,14 @@ import { Select } from "@/components/ui/select";
 import { MatchCard } from "@/components/match-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ListChecks } from "lucide-react";
+import { stageLabel } from "@/lib/knockout";
 
 type Match = {
   id: string;
   matchNumber: number;
-  groupId: string;
-  groupName: string;
+  groupId: string | null;
+  groupName: string | null;
+  stage: string;
   participant1Name: string;
   participant2Name: string;
   participant1Score: number | null;
@@ -44,9 +46,12 @@ export function FixturesList({
     return Array.from(names).sort();
   }, [matches]);
 
+  const hasKnockout = matches.some((m) => m.stage !== "GROUP");
+
   const filtered = useMemo(() => {
     return matches.filter((m) => {
-      if (groupFilter !== "all" && m.groupId !== groupFilter) return false;
+      if (groupFilter === "knockout" && m.stage === "GROUP") return false;
+      if (groupFilter !== "all" && groupFilter !== "knockout" && m.groupId !== groupFilter) return false;
       if (statusFilter !== "all" && m.status !== statusFilter) return false;
       if (
         participantFilter !== "all" &&
@@ -61,15 +66,16 @@ export function FixturesList({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2">
-        <Select value={groupFilter} onChange={(e) => setGroupFilter(e.target.value)} className="w-40">
+        <Select value={groupFilter} onChange={(e) => setGroupFilter(e.target.value)} className="w-full sm:w-40">
           <option value="all">All Groups</option>
           {groups.map((g) => (
             <option key={g.id} value={g.id}>
               {g.name}
             </option>
           ))}
+          {hasKnockout && <option value="knockout">Knockout</option>}
         </Select>
-        <Select value={participantFilter} onChange={(e) => setParticipantFilter(e.target.value)} className="w-44">
+        <Select value={participantFilter} onChange={(e) => setParticipantFilter(e.target.value)} className="w-full sm:w-44">
           <option value="all">All Participants</option>
           {participants.map((p) => (
             <option key={p} value={p}>
@@ -78,7 +84,7 @@ export function FixturesList({
           ))}
         </Select>
         {!statusLock && (
-          <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-40">
+          <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full sm:w-40">
             <option value="all">All Statuses</option>
             <option value="UPCOMING">Upcoming</option>
             <option value="COMPLETED">Completed</option>
@@ -97,6 +103,7 @@ export function FixturesList({
               matchId={m.id}
               matchNumber={m.matchNumber}
               groupName={m.groupName}
+              stageLabel={m.stage !== "GROUP" ? stageLabel(m.stage) : null}
               participant1Name={m.participant1Name}
               participant2Name={m.participant2Name}
               participant1Score={m.participant1Score}

@@ -72,11 +72,11 @@ export function GroupsPanel({
                 {numGroups === 1 ? "group" : "groups"}, then lock them in to generate fixtures.
               </p>
             </div>
-            <div className="flex shrink-0 gap-2">
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:shrink-0 sm:flex-row">
               <Button
                 type="button"
                 variant="outline"
-                className="gap-1.5"
+                className="w-full gap-1.5 sm:w-auto"
                 disabled={!canRandomize || isPending}
                 onClick={() => setConfirmRandomize(true)}
               >
@@ -85,7 +85,7 @@ export function GroupsPanel({
               </Button>
               <Button
                 type="button"
-                className="gap-1.5"
+                className="w-full gap-1.5 sm:w-auto"
                 disabled={groups.length === 0 || isPending}
                 onClick={() => setConfirmLock(true)}
               >
@@ -132,7 +132,7 @@ export function GroupsPanel({
         title="Randomize groups?"
         description="Participants will be randomly assigned to groups. Continue?"
       >
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button variant="outline" onClick={() => setConfirmRandomize(false)}>
             Cancel
           </Button>
@@ -148,7 +148,7 @@ export function GroupsPanel({
         title="Lock groups & generate fixtures?"
         description="Once locked, participants can't be randomly rearranged unless you reset the tournament."
       >
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button variant="outline" onClick={() => setConfirmLock(false)}>
             Cancel
           </Button>

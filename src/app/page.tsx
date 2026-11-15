@@ -19,7 +19,8 @@ export default function HomePage() {
           </h1>
           <p className="max-w-xl text-muted-foreground sm:text-lg">
             Create FIFA-style group stages, generate fixtures automatically, and let standings and goal
-            stats update themselves as results come in. Share a code and anyone can follow along.
+            stats update themselves as results come in — then run the knockout bracket through to a
+            champion. Share a code and anyone can follow along.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link href="/signup">

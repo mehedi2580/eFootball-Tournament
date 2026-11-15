@@ -1,7 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthSessionProvider } from "@/components/session-provider";
 import { ToastProvider } from "@/components/ui/toast";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   title: {
@@ -9,7 +14,7 @@ export const metadata: Metadata = {
     template: "%s — eFootball Hub",
   },
   description:
-    "Create, manage, and follow eFootball tournaments. FIFA-style groups, automatic fixtures, live standings, and goal stats.",
+    "Create, manage, and follow eFootball tournaments. FIFA-style groups, automatic fixtures, live standings, goal stats, and knockout brackets.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

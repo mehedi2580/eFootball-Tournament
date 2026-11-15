@@ -7,7 +7,9 @@ type MatchCardProps = {
   tournamentCode: string;
   matchId: string;
   matchNumber: number;
-  groupName: string;
+  groupName: string | null;
+  /** Shown instead of the group name for knockout matches. */
+  stageLabel?: string | null;
   participant1Name: string;
   participant2Name: string;
   participant1Score: number | null;
@@ -22,6 +24,7 @@ export function MatchCard(props: MatchCardProps) {
     matchId,
     matchNumber,
     groupName,
+    stageLabel,
     participant1Name,
     participant2Name,
     participant1Score,
@@ -37,20 +40,20 @@ export function MatchCard(props: MatchCardProps) {
       <Card className="p-4 transition-colors hover:border-primary/40">
         <div className="mb-3 flex items-center justify-between">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            {groupName} · Match {String(matchNumber).padStart(2, "0")}
+            {stageLabel ?? groupName ?? "Match"} · Match {String(matchNumber).padStart(2, "0")}
           </p>
           <StatusBadge status={isCompleted ? "COMPLETED" : "UPCOMING"} />
         </div>
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <p className="truncate text-right text-sm font-semibold">{participant1Name}</p>
-          <div className="flex items-center justify-center gap-2 rounded-md bg-muted px-3 py-1.5 text-sm font-bold tabular-nums">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-3">
+          <p className="truncate text-right text-[13px] font-semibold sm:text-sm">{participant1Name}</p>
+          <div className="flex items-center justify-center gap-2 rounded-md bg-muted px-2 py-1 text-sm font-bold tabular-nums sm:px-3 sm:py-1.5">
             <span>{isCompleted ? participant1Score : "—"}</span>
             <span className="text-xs font-normal text-muted-foreground">
               {isCompleted ? "–" : "vs"}
             </span>
             <span>{isCompleted ? participant2Score : "—"}</span>
           </div>
-          <p className="truncate text-sm font-semibold">{participant2Name}</p>
+          <p className="truncate text-[13px] font-semibold sm:text-sm">{participant2Name}</p>
         </div>
         {isCompleted && playedAt && (
           <p className="mt-3 text-center text-xs text-muted-foreground">{formatDateTime(playedAt)}</p>

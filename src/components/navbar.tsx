@@ -11,13 +11,16 @@ export async function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container-app flex h-14 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-semibold">
-          <Trophy className="h-5 w-5 text-primary" />
-          <span>eFootball Hub</span>
+          <Trophy className="h-5 w-5 shrink-0 text-primary" />
+          <span>
+            eFootball <span className="hidden sm:inline">Hub</span>
+          </span>
         </Link>
-        <nav className="flex items-center gap-1 sm:gap-2">
+        <nav className="flex items-center gap-0.5 sm:gap-2">
           <Link href="/tournaments">
             <Button variant="ghost" size="sm">
-              Find Tournament
+              <span className="hidden sm:inline">Find Tournament</span>
+              <span className="sm:hidden">Find</span>
             </Button>
           </Link>
           {user ? (

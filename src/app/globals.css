@@ -42,6 +42,18 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    /* Prevent accidental horizontal page scroll on phones. `clip` (unlike
+       `hidden`) does not create a scroll container, so the sticky navbar
+       keeps working. */
+    overflow-x: clip;
+  }
+  /* iOS Safari zooms into inputs with font-size < 16px on focus. */
+  @media (max-width: 640px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
   }
 }
 

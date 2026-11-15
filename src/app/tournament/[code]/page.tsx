@@ -2,21 +2,44 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTournamentByCode } from "@/lib/data";
 import { computeStandings, computeGoalStats } from "@/lib/standings";
+import { buildBracket, getQualifiers, stageLabel } from "@/lib/knockout";
 import { StandingsTable } from "@/components/standings-table";
 import { MatchCard } from "@/components/match-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Trophy } from "lucide-react";
 
 export default async function TournamentOverviewPage({ params }: { params: { code: string } }) {
   const tournament = await getTournamentByCode(params.code);
   if (!tournament || !tournament.isPublic) notFound();
 
-  const standings = computeStandings(tournament.participants, tournament.matches, {
+  const groupMatches = tournament.matches.filter((m) => m.stage === "GROUP");
+  const standings = computeStandings(tournament.participants, groupMatches, {
     win: tournament.pointsForWin,
     draw: tournament.pointsForDraw,
     loss: tournament.pointsForLoss,
   });
   const goalStats = computeGoalStats(tournament.participants, tournament.matches);
+  const knockoutMatches = tournament.matches.filter((m) => m.stage !== "GROUP");
+  const champion =
+    knockoutMatches.length > 0
+      ? buildBracket(
+          getQualifiers(
+            tournament.groups.map((g) => ({
+              id: g.id,
+              name: g.name,
+              participants: g.groupParticipants.map((gp) => gp.participant),
+            })),
+            groupMatches,
+            {
+              win: tournament.pointsForWin,
+              draw: tournament.pointsForDraw,
+              loss: tournament.pointsForLoss,
+            }
+          ),
+          knockoutMatches
+        ).champion
+      : null;
   const recentResults = tournament.matches
     .filter((m) => m.status === "COMPLETED")
     .sort((a, b) => (b.playedAt?.getTime() ?? 0) - (a.playedAt?.getTime() ?? 0))
@@ -47,6 +70,20 @@ export default async function TournamentOverviewPage({ params }: { params: { cod
           </CardContent>
         </Card>
       </div>
+
+      {champion && (
+        <Card>
+          <CardContent className="flex items-center gap-3 p-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Trophy className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Champion</p>
+              <p className="text-lg font-bold">{champion.name}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {tournament.groups.length > 0 && (
         <div>
@@ -82,7 +119,8 @@ export default async function TournamentOverviewPage({ params }: { params: { cod
                   tournamentCode={tournament.uniqueCode}
                   matchId={m.id}
                   matchNumber={m.matchNumber}
-                  groupName={m.group.name}
+                  groupName={m.group?.name ?? null}
+                  stageLabel={m.stage !== "GROUP" ? stageLabel(m.stage) : null}
                   participant1Name={m.participant1.name}
                   participant2Name={m.participant2.name}
                   participant1Score={m.participant1Score}
@@ -113,7 +151,8 @@ export default async function TournamentOverviewPage({ params }: { params: { cod
                   tournamentCode={tournament.uniqueCode}
                   matchId={m.id}
                   matchNumber={m.matchNumber}
-                  groupName={m.group.name}
+                  groupName={m.group?.name ?? null}
+                  stageLabel={m.stage !== "GROUP" ? stageLabel(m.stage) : null}
                   participant1Name={m.participant1.name}
                   participant2Name={m.participant2.name}
                   participant1Score={m.participant1Score}

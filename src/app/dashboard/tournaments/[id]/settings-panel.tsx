@@ -123,7 +123,7 @@ export function SettingsPanel({
         title="Reset this tournament?"
         description="All groups, fixtures, and match results will be permanently deleted. This can't be undone."
       >
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button variant="outline" onClick={() => setConfirmReset(false)}>
             Cancel
           </Button>
@@ -139,7 +139,7 @@ export function SettingsPanel({
         title="Delete this tournament?"
         description="This will permanently delete the tournament, its participants, groups, and match results. This can't be undone."
       >
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button variant="outline" onClick={() => setConfirmDelete(false)}>
             Cancel
           </Button>
